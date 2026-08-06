@@ -1,0 +1,45 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+csv_data = """Sky,AirTemp,Humidity,Wind,Water,Forecast,EnjoySport
+Sunny,Warm,Normal,Strong,Warm,Same,Yes
+Sunny,Warm,High,Strong,Warm,Same,Yes
+Rainy,Cold,High,Strong,Warm,Change,No
+Sunny,Warm,High,Strong,Cool,Change,Yes"""
+
+with open("data.csv", "w") as f:
+    f.write(csv_data)
+
+df = pd.read_csv("data.csv")
+concepts = np.array(df.iloc[:, :-1])
+target = np.array(df.iloc[:, -1])
+
+def candidate_elimination(concepts, target):
+    specific_h = concepts[0].copy()
+    general_h = [["?" for _ in range(len(specific_h))] for _ in range(len(specific_h))]
+    for i, h in enumerate(concepts):
+        if target[i] == "Yes":
+            for x in range(len(specific_h)):
+                if h[x] != specific_h[x]:
+                    specific_h[x] = '?'
+                    general_h[x][x] = '?'
+        if target[i] == "No":
+            for x in range(len(specific_h)):
+                if h[x] != specific_h[x]:
+                    general_h[x][x] = specific_h[x]
+                else:
+                    general_h[x][x] = '?'
+    general_h = [g for g in general_h if g != ['?'] * len(specific_h)]
+    return specific_h, general_h
+
+s_final, g_final = candidate_elimination(concepts, target)
+print("Specific Boundary (S):", s_final)
+print("General Boundary (G):", g_final)
+
+plt.figure(figsize=(6, 4))
+plt.bar(['Specific (S)', 'General (G)'], [1, len(g_final)], color=['#2b5c8f', '#d95f02'])
+plt.ylabel("Hypotheses Count")
+plt.title("Candidate Elimination Version Space")
+plt.tight_layout()
+plt.show()
