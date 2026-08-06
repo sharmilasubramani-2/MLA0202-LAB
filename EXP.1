@@ -1,0 +1,39 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+data = pd.DataFrame([
+    ['Sunny', 'Warm', 'Normal', 'Strong', 'Warm', 'Same', 'Yes'],
+    ['Sunny', 'Warm', 'High', 'Strong', 'Warm', 'Same', 'Yes'],
+    ['Rainy', 'Cold', 'High', 'Strong', 'Warm', 'Change', 'No'],
+    ['Sunny', 'Warm', 'High', 'Strong', 'Cool', 'Change', 'Yes']
+], columns=['Sky', 'AirTemp', 'Humidity', 'Wind', 'Water', 'Forecast', 'EnjoySport'])
+
+X = np.array(data.iloc[:, :-1])
+y = np.array(data.iloc[:, -1])
+
+def find_s(concepts, target):
+    for i, val in enumerate(target):
+        if val == 'Yes':
+            hypothesis = concepts[i].copy()
+            break
+    history = [hypothesis.copy()]
+    for i, val in enumerate(concepts):
+        if target[i] == 'Yes':
+            for x in range(len(hypothesis)):
+                if val[x] != hypothesis[x]:
+                    hypothesis[x] = '?'
+            history.append(hypothesis.copy())
+    return hypothesis, history
+
+most_specific, history = find_s(X, y)
+print("Most Specific Hypothesis:", most_specific)
+
+plt.figure(figsize=(7, 4))
+plt.plot(range(len(history)), range(len(history)), marker='o', color='teal', linewidth=2)
+plt.yticks(range(len(history)), [f"Step {i}\n{h}" for i, h in enumerate(history)])
+plt.xlabel("Positive Sample Steps")
+plt.title("FIND-S Hypothesis Generalization")
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.tight_layout()
+plt.show()
