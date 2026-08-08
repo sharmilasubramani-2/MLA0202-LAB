@@ -1,0 +1,44 @@
+# Sharmila S
+# Implement the Car Price Prediction Model using Python
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+data = {
+    'Year': [2015, 2016, 2017, 2018, 2019, 2020, 2021],
+    'Price': [8000, 9500, 11000, 14000, 16500, 18000, 23000]
+}
+
+df = pd.DataFrame(data)
+X = df[['Year']]
+y = df['Price']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+# Text Output
+print("=== CAR PRICE PREDICTION RESULT ===")
+print("Mean Squared Error:", mean_squared_error(y_test, y_pred))
+print("R2 Score:", r2_score(y_test, y_pred))
+pred_2022 = model.predict([[2022]])
+print(f"Predicted Car Price for Year 2022: ${pred_2022[0]:.2f}")
+print("SHARMILA S (192525011)\n")
+
+# Visualization
+plt.figure(figsize=(7, 5))
+plt.scatter(df['Year'], df['Price'], color='blue', label='Actual Price Data', s=70)
+plt.plot(df['Year'], model.predict(X), color='red', linestyle='-', linewidth=2, label='Regression Trendline')
+plt.title('Car Price Prediction Over Time', fontsize=12, fontweight='bold')
+plt.xlabel('Model Year')
+plt.ylabel('Price ($)')
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.legend()
+plt.tight_layout()
+plt.show()
