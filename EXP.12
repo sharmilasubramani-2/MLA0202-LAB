@@ -1,0 +1,42 @@
+# Sharmila S
+# Implement Iris Flower Classification using KNN
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+knn = KNeighborsClassifier(n_neighbors=3)
+knn.fit(X_train, y_train)
+
+y_pred = knn.predict(X_test)
+
+# Text Output
+print("=== IRIS CLASSIFICATION USING KNN RESULT ===")
+print("Accuracy Score:", accuracy_score(y_test, y_pred))
+print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
+sample_pred = knn.predict([[5.1, 3.5, 1.4, 0.2]])
+print(f"Predicted Species for sample [5.1, 3.5, 1.4, 0.2]: {iris.target_names[sample_pred[0]]}")
+print("SHARMILA S (192525011)\n")
+
+# Visualization
+plt.figure(figsize=(7, 5))
+colors = ['purple', 'teal', 'yellow']
+for i, target_name in enumerate(iris.target_names):
+    plt.scatter(X[y == i, 0], X[y == i, 1], c=colors[i], label=target_name, s=70)
+
+plt.title('Iris Flower Species Distribution (KNN)', fontsize=12, fontweight='bold')
+plt.xlabel('Sepal Length (cm)')
+plt.ylabel('Sepal Width (cm)')
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.legend()
+plt.tight_layout()
+plt.show()
