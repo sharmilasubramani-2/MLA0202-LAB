@@ -1,0 +1,40 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import Perceptron
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report
+
+iris = load_iris()
+X = pd.DataFrame(iris.data, columns=iris.feature_names)
+y = iris.target
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+scaler = StandardScaler()
+X_train_scaled = pd.DataFrame(scaler.fit_transform(X_train), columns=X.columns)
+X_test_scaled = pd.DataFrame(scaler.transform(X_test), columns=X.columns)
+
+model = Perceptron(max_iter=1000, random_state=42)
+model.fit(X_train_scaled, y_train)
+
+y_pred = model.predict(X_test_scaled)
+
+print("=== PERCEPTRON IRIS CLASSIFICATION RESULT ===")
+print("Accuracy Score:", round(accuracy_score(y_test, y_pred), 4))
+print("\nClassification Report:\n", classification_report(y_test, y_pred, target_names=iris.target_names))
+print("SHARMILA S (192525011)\n")
+
+plt.figure(figsize=(8, 5))
+colors = ['purple', 'teal', 'gold']
+for i, target_name in enumerate(iris.target_names):
+    plt.scatter(X.iloc[y == i, 0], X.iloc[y == i, 2], c=colors[i], label=target_name, s=70)
+
+plt.title('Perceptron Feature Map (Sepal Length vs Petal Length)', fontsize=12, fontweight='bold')
+plt.xlabel('Sepal Length (cm)')
+plt.ylabel('Petal Length (cm)')
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.legend()
+plt.tight_layout()
+plt.show()
