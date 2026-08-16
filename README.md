@@ -1,4 +1,4 @@
-Markdown# MLA 0202 - FUNDAMENTALS OF MACHINE LEARNING
+# MLA 0202 - FUNDAMENTALS OF MACHINE LEARNING
 
 **Course Code:** MLA 0202  
 **Course Name:** Fundamentals of Machine Learning  
