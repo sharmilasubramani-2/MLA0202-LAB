@@ -1,0 +1,45 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+data = {
+    'RAM_GB': [2, 3, 4, 6, 8, 12, 2, 4, 6, 8],
+    'Battery_mAh': [3000, 3500, 4000, 4500, 5000, 5000, 2500, 4000, 4800, 6000],
+    'Price_Range': ['Budget', 'Budget', 'Mid-Range', 'Mid-Range', 'Flagship', 'Flagship', 'Budget', 'Mid-Range', 'Mid-Range', 'Flagship']
+}
+
+df = pd.DataFrame(data)
+X = df[['RAM_GB', 'Battery_mAh']]
+y = df['Price_Range']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+model = RandomForestClassifier(n_estimators=50, random_state=42)
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+print("=== MOBILE PRICE PREDICTION RESULT ===")
+print("Model Accuracy:", round(accuracy_score(y_test, y_pred), 4))
+
+sample_phone = pd.DataFrame({'RAM_GB': [6], 'Battery_mAh': [4500]})
+pred_bracket = model.predict(sample_phone)[0]
+print(f"Predicted Bracket for 6GB RAM & 4500mAh Battery: {pred_bracket}")
+print("SHARMILA S (192525011)\n")
+
+plt.figure(figsize=(8, 5))
+color_map = {'Budget': 'crimson', 'Mid-Range': 'darkorange', 'Flagship': 'forestgreen'}
+
+for category in df['Price_Range'].unique():
+    subset = df[df['Price_Range'] == category]
+    plt.scatter(subset['RAM_GB'], subset['Battery_mAh'], color=color_map[category], label=f'{category} Tier', s=90)
+
+plt.title('Mobile Price Segment Distribution', fontsize=12, fontweight='bold')
+plt.xlabel('RAM (GB)')
+plt.ylabel('Battery Capacity (mAh)')
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.legend()
+plt.tight_layout()
+plt.show()
