@@ -1,0 +1,46 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+data = {
+    'Annual_Income_Lakhs': [4.0, 6.5, 2.5, 8.0, 3.5, 9.5, 1.8, 5.0, 7.2, 2.0],
+    'Loan_Amount_Lakhs': [1.0, 2.5, 0.8, 4.0, 1.2, 5.0, 0.5, 1.8, 3.0, 0.6],
+    'Loan_Status': ['Approved', 'Approved', 'Rejected', 'Approved', 'Rejected', 'Approved', 'Rejected', 'Approved', 'Approved', 'Rejected']
+}
+
+df = pd.DataFrame(data)
+X = df[['Annual_Income_Lakhs', 'Loan_Amount_Lakhs']]
+y = df['Loan_Status']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42, stratify=y)
+
+model = GaussianNB()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+print("=== BANK LOAN PREDICTION (NAIVE BAYES) ===")
+print("Model Accuracy:", round(accuracy_score(y_test, y_pred), 4))
+print("\nConfusion Matrix [Approved, Rejected]:\n", confusion_matrix(y_test, y_pred, labels=['Approved', 'Rejected']))
+
+sample_applicant = pd.DataFrame({'Annual_Income_Lakhs': [5.5], 'Loan_Amount_Lakhs': [1.5]})
+prediction = model.predict(sample_applicant)[0]
+print(f"Loan Status for Income ₹5.5 Lakhs & Loan ₹1.5 Lakhs: {prediction}")
+print("SHARMILA S (192525011)\n")
+
+plt.figure(figsize=(8, 5))
+app = df[df['Loan_Status'] == 'Approved']
+rej = df[df['Loan_Status'] == 'Rejected']
+
+plt.scatter(app['Annual_Income_Lakhs'], app['Loan_Amount_Lakhs'], color='forestgreen', label='Approved Loans', s=80)
+plt.scatter(rej['Annual_Income_Lakhs'], rej['Loan_Amount_Lakhs'], color='crimson', label='Rejected Loans', s=80)
+
+plt.title('Bank Loan Eligibility Distribution', fontsize=12, fontweight='bold')
+plt.xlabel('Annual Income (₹ in Lakhs)')
+plt.ylabel('Requested Loan Amount (₹ in Lakhs)')
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.legend()
+plt.tight_layout()
+plt.show()
